@@ -5,33 +5,20 @@
  * const windowsNamedPipeAddress = new SocketAddrUnix('\\\\.\\pipe\\app');
  */
 export class SocketAddrUnix {
-	#path: string;
+	public readonly family = 'unix';
+	public readonly path: string;
+
 	public constructor(path: string) {
-		this.#path = path;
-	}
-
-	public get path(): string {
-		return this.#path;
-	}
-
-	public get family(): 'unix' {
-		return 'unix';
-	}
-
-	public toObject(): {path: string; family: string} {
-		return {
-			path: this.#path,
-			family: 'unix',
-		};
+		this.path = path;
 	}
 
 	public asNodeListenerOptions(): {path: string} {
 		return {
-			path: this.#path,
+			path: this.path,
 		};
 	}
 
 	public toString(): string {
-		return this.#path;
+		return this.path;
 	}
 }

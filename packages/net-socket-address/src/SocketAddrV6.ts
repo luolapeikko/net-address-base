@@ -29,10 +29,11 @@ export class SocketAddrV6 {
 		this.address = this.#addr.toString();
 	}
 
-	public getRawAddress(): Ipv6Addr {
-		return this.#addr;
-	}
-
+	/**
+	 * Returns an object suitable for use as options in Node.js `net.Server.listen()` method.
+	 * @returns An object containing the `port` and `host` properties.
+	 * @since v0.0.1
+	 */
 	public asNodeListenerOptions(): {port: number; host: string} {
 		return {
 			port: this.port,
@@ -41,8 +42,18 @@ export class SocketAddrV6 {
 	}
 
 	/**
+	 * Gets the raw `Ipv6Addr` instance representing the IP address of this socket address.
+	 * @returns Ipv6Addr instance of the socket address's IP address.
+	 * @since v0.0.1
+	 */
+	public getRawAddress(): Ipv6Addr {
+		return this.#addr;
+	}
+
+	/**
 	 * Returns a string representation of this socket address.
 	 * @returns The string representation in the format "address:port".
+	 * @since v0.0.1
 	 */
 	public toString(): string {
 		return `${this.address}:${this.port}`;

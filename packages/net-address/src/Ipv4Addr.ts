@@ -12,10 +12,10 @@ import {Ipv6Addr} from './Ipv6Addr';
 export class Ipv4Addr {
 	/**
 	 * Creates an IPv4 address from dotted-decimal text.
-	 * @returns A successful result with an IPv4 address, or an error when the input is invalid.
+	 * @returns A successful {@link IResult} with an IPv4 address, or an error when the input is invalid.
 	 * @since v0.0.1
 	 */
-	public static from(value: string): IResult<Ipv4Addr> {
+	public static from(value: string): IResult<Ipv4Addr, TypeError> {
 		const match = value.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
 		if (!match) {
 			return Err(new TypeError(`${value} is invalid ipv4 value`));
@@ -26,9 +26,10 @@ export class Ipv4Addr {
 		}
 		return Ok(new Ipv4Addr(octets[0], octets[1], octets[2], octets[3]));
 	}
+
 	/**
 	 * Creates an IPv4 address from a 4-byte buffer.
-	 * @returns A successful result with an IPv4 address, or an error when the buffer cannot be read.
+	 * @returns A successful {@link IResult} with an IPv4 address, or an error when the buffer cannot be read.
 	 * @since v0.0.1
 	 */
 	public static fromBuffer(buffer: ArrayBuffer, littleEndian?: boolean): IResult<Ipv4Addr> {
@@ -45,21 +46,30 @@ export class Ipv4Addr {
 	 * @since v0.0.1
 	 */
 	public static readonly BITS = 32;
+
 	/**
 	 * The broadcast address `255.255.255.255`.
 	 * @since v0.0.1
 	 */
 	public static readonly BROADCAST: Ipv4Addr = new Ipv4Addr(0xffffffff);
+
 	/**
 	 * The localhost address `127.0.0.1`.
 	 * @since v0.0.1
 	 */
 	public static readonly LOCALHOST: Ipv4Addr = new Ipv4Addr(0x7f000001);
+
 	/**
 	 * The unspecified address `0.0.0.0`.
 	 * @since v0.0.1
 	 */
 	public static readonly UNSPECIFIED: Ipv4Addr = new Ipv4Addr(0x00000000);
+
+	/**
+	 * The address family identifier for IPv4 addresses.
+	 * @since v0.0.1
+	 */
+	public readonly family = 'ipv4';
 
 	#integerAddress: number;
 
@@ -97,6 +107,7 @@ export class Ipv4Addr {
 	public isBroadcast(): boolean {
 		return this.#integerAddress === 0xffffffff;
 	}
+
 	/**
 	 * Checks whether this address is in a documentation-only range.
 	 * @see https://datatracker.ietf.org/doc/html/rfc5737
@@ -110,6 +121,7 @@ export class Ipv4Addr {
 			this.#match(0xcb007100, 24) // 203.0.113.0/24
 		);
 	}
+
 	/**
 	 * Checks whether this address is in the benchmarking range.
 	 * @see https://datatracker.ietf.org/doc/html/rfc2544
@@ -119,6 +131,7 @@ export class Ipv4Addr {
 	public isBenchmarking(): boolean {
 		return this.#match(0xc6120000, 15);
 	}
+
 	/**
 	 * Checks whether this address is globally reachable.
 	 * @see https://www.iana.org/assignments/iana-ipv4-special-registry/iana-ipv4-special-registry.xhtml
@@ -139,6 +152,7 @@ export class Ipv4Addr {
 			this.isBroadcast()
 		);
 	}
+
 	/**
 	 * Checks whether this address is link-local.
 	 * @see https://datatracker.ietf.org/doc/html/rfc3927
@@ -148,6 +162,7 @@ export class Ipv4Addr {
 	public isLinkLocal(): boolean {
 		return this.#match(0xa9fe0000, 16);
 	}
+
 	/**
 	 * Checks whether this address is a loopback address.
 	 * @see https://datatracker.ietf.org/doc/html/rfc1122
@@ -157,6 +172,7 @@ export class Ipv4Addr {
 	public isLoopback(): boolean {
 		return this.#match(0x7f000000, 8);
 	}
+
 	/**
 	 * Checks whether this address is a multicast address.
 	 * @see https://datatracker.ietf.org/doc/html/rfc5771
@@ -166,6 +182,7 @@ export class Ipv4Addr {
 	public isMulticast(): boolean {
 		return this.#match(0xe0000000, 4);
 	}
+
 	/**
 	 * Checks whether this address is in a private-use range.
 	 * @see https://datatracker.ietf.org/doc/html/rfc1918
@@ -179,6 +196,7 @@ export class Ipv4Addr {
 			this.#match(0xc0a80000, 16) // 192.168.0.0/16
 		);
 	}
+
 	/**
 	 * Checks whether this address is in the reserved range.
 	 * @see https://datatracker.ietf.org/doc/html/rfc1112
@@ -188,6 +206,7 @@ export class Ipv4Addr {
 	public isReserved(): boolean {
 		return this.#match(0xf0000000, 4) && !this.isBroadcast();
 	}
+
 	/**
 	 * Checks whether this address is in the shared Carrier-Grade NAT range.
 	 * @see https://datatracker.ietf.org/doc/html/rfc6598
@@ -197,6 +216,7 @@ export class Ipv4Addr {
 	public isShared(): boolean {
 		return this.#match(0x64400000, 10);
 	}
+	
 	/**
 	 * Checks whether this address is the unspecified address.
 	 * @returns `true` when the address is `0.0.0.0`, otherwise `false`.

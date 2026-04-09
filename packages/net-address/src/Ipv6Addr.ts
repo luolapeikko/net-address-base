@@ -12,6 +12,7 @@ import {Ipv4Addr} from './Ipv4Addr';
 export class Ipv6Addr {
 	private static regex =
 		/^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$/;
+
 	/**
 	 * Creates an IPv6 address from text.
 	 * @returns A successful result with an IPv6 address, or an error when the input is invalid.
@@ -87,16 +88,24 @@ export class Ipv6Addr {
 	 * @since v0.0.1
 	 */
 	public static readonly BITS = 128;
+
 	/**
 	 * The loopback address (`::1`).
 	 * @since v0.0.1
 	 */
 	public static readonly LOCALHOST: Ipv6Addr = new Ipv6Addr(0x00000000000000000000000000000001n);
+
 	/**
 	 * The unspecified address (`::`).
 	 * @since v0.0.1
 	 */
 	public static readonly UNSPECIFIED: Ipv6Addr = new Ipv6Addr(0x00000000000000000000000000000000n);
+
+	/**
+	 * The address family identifier for IPv6 addresses.
+	 * @since v0.0.1
+	 */
+	public readonly family = 'ipv6';
 
 	#integerAddress: bigint;
 	public constructor(value: bigint);
@@ -108,6 +117,7 @@ export class Ipv6Addr {
 			this.#integerAddress = valueOrSegments;
 		}
 	}
+
 	/**
 	 * Checks whether this address is in the benchmarking range.
 	 * @see https://tools.ietf.org/html/rfc5180 and https://www.rfc-editor.org/errata_search.php?eid=1752
@@ -117,6 +127,7 @@ export class Ipv6Addr {
 	public isBenchmarking(): boolean {
 		return this.#match(0x20010002000000000000000000000000n, 48);
 	}
+
 	/**
 	 * Checks whether this address is in a documentation-only range.
 	 * @see https://tools.ietf.org/html/rfc3849 and https://tools.ietf.org/html/rfc9637
@@ -126,6 +137,7 @@ export class Ipv6Addr {
 	public isDocumentation(): boolean {
 		return this.#match(0x20010db8000000000000000000000000n, 32) || this.#match(0x3fff0000000000000000000000000000n, 20);
 	}
+
 	/**
 	 * Checks whether this address is the loopback address.
 	 * @see https://tools.ietf.org/html/rfc4291#section-2.5.3
@@ -135,6 +147,7 @@ export class Ipv6Addr {
 	public isLoopback(): boolean {
 		return this.#integerAddress === 1n;
 	}
+
 	/**
 	 * Checks whether this address is the unspecified address.
 	 * @see https://tools.ietf.org/html/rfc4291
@@ -144,6 +157,7 @@ export class Ipv6Addr {
 	public isUnspecified(): boolean {
 		return this.#integerAddress === 0n;
 	}
+
 	/**
 	 * Checks whether this address is a multicast address.
 	 * @see https://tools.ietf.org/html/rfc4291
@@ -153,6 +167,7 @@ export class Ipv6Addr {
 	public isMulticast(): boolean {
 		return this.#integerAddress >> 120n === 0xffn;
 	}
+
 	/**
 	 * Checks whether this address is an IPv4-mapped IPv6 address.
 	 * @returns `true` when the address is in `::ffff:0:0/96`, otherwise `false`.
@@ -161,6 +176,7 @@ export class Ipv6Addr {
 	public isIpv4Mapped(): boolean {
 		return this.#match(0x00000000000000000000ffff00000000n, 96);
 	}
+
 	/**
 	 * Checks whether this address is a unicast address.
 	 * @see https://tools.ietf.org/html/rfc4291
@@ -170,6 +186,7 @@ export class Ipv6Addr {
 	public isUnicast(): boolean {
 		return !this.isMulticast();
 	}
+
 	/**
 	 * Checks whether this address is a link-local unicast address.
 	 * @see https://tools.ietf.org/html/rfc4291
@@ -179,6 +196,7 @@ export class Ipv6Addr {
 	public isUnicastLinkLocal(): boolean {
 		return this.#match(0xfe800000000000000000000000000000n, 10);
 	}
+
 	/**
 	 * Checks whether this address is a global unicast address.
 	 * @see https://tools.ietf.org/html/rfc4291#section-2.5.7
@@ -188,6 +206,7 @@ export class Ipv6Addr {
 	public isUnicastGlobal(): boolean {
 		return this.isUnicast() && !this.isLoopback() && !this.isUnicastLinkLocal() && !this.isUniqueLocal() && !this.isUnspecified() && !this.isDocumentation();
 	}
+
 	/**
 	 * Checks whether this address appears globally reachable.
 	 * @see https://www.iana.org/assignments/iana-ipv6-special-registry/iana-ipv6-special-registry.xhtml
@@ -206,6 +225,7 @@ export class Ipv6Addr {
 			!this.isMulticast()
 		);
 	}
+
 	/**
 	 * Checks whether this address is in the unique-local range.
 	 * @see https://tools.ietf.org/html/rfc4193
@@ -228,6 +248,7 @@ export class Ipv6Addr {
 		}
 		return None();
 	}
+
 	/**
 	 * Converts this address to IPv4 only when it is IPv4-mapped.
 	 * @returns An IPv4 address for `::ffff:a.b.c.d`; otherwise `None`.

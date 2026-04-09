@@ -9,7 +9,7 @@ describe('SocketAddrUnix', function () {
 		expect(socketAddress.path).toBe(socketPath);
 		expect(socketAddress.family).toBe('unix');
 		expect(socketAddress.toString()).toBe(socketPath);
-		expect(socketAddress.toObject()).toEqual({
+		expect(socketAddress).toEqual({
 			path: socketPath,
 			family: 'unix',
 		});
