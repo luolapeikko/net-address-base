@@ -5,6 +5,7 @@ on:
   push:
     branches: [main]
     paths:
+      - ".github/workflows/docs.yml"
       - "packages/**"
       - "README.md"
       - "package.json"
