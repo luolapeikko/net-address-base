@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "net-address": ["packages/net-address/src/index.ts"],
+      "net-socket-address": ["packages/net-socket-address/src/index.ts"],
+      "unix-socket-address": ["packages/unix-socket-address/src/index.ts"]
+    }
+  },
+  "extends": "./tsconfig.base.json"
+}

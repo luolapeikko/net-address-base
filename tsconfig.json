@@ -1,0 +1,4 @@
+{
+  "files": [],
+  "references": [{ "path": "./packages/net-address" }, { "path": "./packages/net-socket-address" }, { "path": "./packages/unix-socket-address" }]
+}
