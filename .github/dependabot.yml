@@ -1,7 +1,10 @@
 version: 2
 updates:
   - package-ecosystem: "npm"
-    directory: "/"
+    directories:
+      - "/packages/net-address"
+      - "/packages/net-socket-address"
+      - "/packages/unix-socket-address"
     schedule:
       interval: "weekly"
     allow:
