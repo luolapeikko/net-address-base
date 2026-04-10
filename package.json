@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "build": "pnpm -r build",
+    "pretest": "pnpm -r run build && pnpm -r run validate",
     "test": "vitest run --typecheck --coverage",
     "lint": "biome check",
     "validate": "pnpm -r validate",
