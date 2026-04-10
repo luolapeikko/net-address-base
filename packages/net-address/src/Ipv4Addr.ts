@@ -216,7 +216,7 @@ export class Ipv4Addr {
 	public isShared(): boolean {
 		return this.#match(0x64400000, 10);
 	}
-	
+
 	/**
 	 * Checks whether this address is the unspecified address.
 	 * @returns `true` when the address is `0.0.0.0`, otherwise `false`.

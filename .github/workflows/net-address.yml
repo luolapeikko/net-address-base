@@ -1,0 +1,25 @@
+name: net-address CI/CD
+on:
+  push:
+    branches: [main]
+    paths:
+      - "packages/net-address/**"
+      - ".github/workflows/net-address.yml"
+      - "package.json"
+  pull_request:
+    branches: [main]
+    paths:
+      - "packages/net-address/**"
+      - ".github/workflows/net-address.yml"
+      - "package.json"
+
+permissions:
+  id-token: write # Required for OIDC
+  contents: read
+
+jobs:
+  module-flow:
+    uses: ./.github/workflows/module.yml
+    secrets: inherit
+    with:
+      package-path: packages/net-address

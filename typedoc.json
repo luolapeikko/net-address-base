@@ -1,30 +1,30 @@
 {
-	"$schema": "https://typedoc.org/schema.json",
-	"entryPointStrategy": "packages",
-	"entryPoints": ["packages/*"],
-	"externalSymbolLinkMappings": {
-		"@luolapeikko/result-option": {
-			"IResult": "https://luolapeikko.github.io/result-option/types/IResult.html"
-		},
-		"net-address": {
-			"Ipv4Addr.UNSPECIFIED": "https://luolapeikko.github.io/net-address-base/classes/net-address.Ipv4Addr.html#unspecified"
-		},
-		"core-ts-root": {
-			"undefined": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined"
-		},
-		"global": {
-			"null": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null"
-		},
-		"typescript": {
-			"AsyncIterable": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AsyncIterator",
-			"ReadonlyArray": "https://www.typescriptlang.org/docs/handbook/2/objects.html#readonlyarraytype"
-		}
-	},
-	"name": "net-address",
-	"out": "doc",
-	"packageOptions": {
-		"entryPoints": ["src/index.ts"]
-	},
-	"plugin": ["typedoc-plugin-dt-links", "typedoc-plugin-mdn-links"],
-	"readme": "README.md"
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPointStrategy": "packages",
+  "entryPoints": ["packages/*"],
+  "externalSymbolLinkMappings": {
+    "@luolapeikko/result-option": {
+      "IResult": "https://luolapeikko.github.io/result-option/types/IResult.html"
+    },
+    "net-address": {
+      "Ipv4Addr.UNSPECIFIED": "https://luolapeikko.github.io/net-address-base/classes/net-address.Ipv4Addr.html#unspecified"
+    },
+    "core-ts-root": {
+      "undefined": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined"
+    },
+    "global": {
+      "null": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null"
+    },
+    "typescript": {
+      "AsyncIterable": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AsyncIterator",
+      "ReadonlyArray": "https://www.typescriptlang.org/docs/handbook/2/objects.html#readonlyarraytype"
+    }
+  },
+  "name": "net-address",
+  "out": "doc",
+  "packageOptions": {
+    "entryPoints": ["src/index.ts"]
+  },
+  "plugin": ["typedoc-plugin-dt-links", "typedoc-plugin-mdn-links"],
+  "readme": "README.md"
 }
