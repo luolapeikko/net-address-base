@@ -5,7 +5,7 @@
 ## Installation
 
 ```bash
-npm i net-address
+npm i net-address @luolapeikko/result-option
 ```
 
 ## Examples
