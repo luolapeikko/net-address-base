@@ -5,12 +5,14 @@ on:
     paths:
       - "packages/unix-socket-address/**"
       - ".github/workflows/unix-socket-address.yml"
+      - ".github/workflows/module.yml"
       - "package.json"
   pull_request:
     branches: [main]
     paths:
       - "packages/unix-socket-address/**"
       - ".github/workflows/unix-socket-address.yml"
+      - ".github/workflows/module.yml"
       - "package.json"
 
 permissions:

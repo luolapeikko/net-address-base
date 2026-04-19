@@ -5,12 +5,14 @@ on:
     paths:
       - "packages/net-socket-address/**"
       - ".github/workflows/net-socket-address.yml"
+      - ".github/workflows/module.yml"
       - "package.json"
   pull_request:
     branches: [main]
     paths:
       - "packages/net-socket-address/**"
       - ".github/workflows/net-socket-address.yml"
+      - ".github/workflows/module.yml"
       - "package.json"
 
 permissions:
