@@ -3,16 +3,18 @@
 ## Runtime agnostic core Unix Socket IpAddr class base on Rust implementation.
 
 ## Installation
+
 ```bash
 npm i unix-socket-address
 ```
 
 ## Examples
+
 ```typescript
- const socketAddress = new SocketAddrUnix('/tmp/app.sock');
- const windowsNamedPipeAddress = new SocketAddrUnix('\\\\.\\pipe\\app');
+const socketAddress = new SocketAddrUnix("/tmp/app.sock");
+const windowsNamedPipeAddress = new SocketAddrUnix("\\\\.\\pipe\\app");
 
-server.listen(socketAddress.asNodeListenerOptions())
- ```
+server.listen(socketAddress.asNodeListener());
+```
 
- ## Full [Documentation](https://luolapeikko.github.io/net-address-base/)
+## Full [Documentation](https://luolapeikko.github.io/net-address-base/)

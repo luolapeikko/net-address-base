@@ -266,6 +266,16 @@ export class Ipv4Addr {
 		return buffer;
 	}
 
+	/**
+	 * Compares this IPv4 address with another for equality.
+	 * @param other instance of another IPv4 address to compare with.
+	 * @returns `true` if both addresses are equal, otherwise `false`.
+	 * @since v0.1.0
+	 */
+	public equals(other: Ipv4Addr | Ipv6Addr | object): boolean {
+		return 'family' in other && this.family === other.family && this.#integerAddress === other.#integerAddress;
+	}
+
 	#toInteger(num1: number, num2: number, num3: number, num4: number): number {
 		for (const octet of [num1, num2, num3, num4]) {
 			if (octet < 0 || octet > 255) {

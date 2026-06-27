@@ -53,9 +53,9 @@ describe('SocketAddr type testing', function () {
 			assertType<'ipv4'>(socketAddress.family);
 			assertType<string>(socketAddress.address.toString());
 			assertType<number>(socketAddress.port);
-			assertType<NodeSocketAddressInitOptions>(socketAddress);
-			assertType<NodeListenOptions>(socketAddress.asNodeListenerOptions());
-			assertType<NodeBindOptions>(socketAddress);
+			assertType<NodeSocketAddressInitOptions>(socketAddress.asNodeBind());
+			assertType<NodeListenOptions>(socketAddress.asNodeListener());
+			assertType<NodeBindOptions>(socketAddress.asNodeBind());
 			assertType<string>(socketAddress.toString());
 		});
 	});
@@ -66,9 +66,9 @@ describe('SocketAddr type testing', function () {
 			assertType<'ipv6'>(socketAddress.family);
 			assertType<string>(socketAddress.address.toString());
 			assertType<number>(socketAddress.port);
-			assertType<NodeSocketAddressInitOptions>(socketAddress);
-			assertType<NodeListenOptions>(socketAddress.asNodeListenerOptions());
-			assertType<NodeBindOptions>(socketAddress);
+			assertType<NodeSocketAddressInitOptions>(socketAddress.asNodeBind());
+			assertType<NodeListenOptions>(socketAddress.asNodeListener());
+			assertType<NodeBindOptions>(socketAddress.asNodeBind());
 			assertType<string>(socketAddress.toString());
 		});
 	});

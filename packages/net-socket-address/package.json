@@ -1,6 +1,6 @@
 {
 	"name": "net-socket-address",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"description": "Network socket address instances",
 	"main": "./dist/index.cjs",
 	"module": "./dist/index.mjs",

@@ -391,6 +391,16 @@ export class Ipv6Addr {
 		return buffer;
 	}
 
+	/**
+	 * Compares this IPv6 address with another for equality.
+	 * @param other instance of another IPv6 address to compare with.
+	 * @returns `true` if both addresses are equal, otherwise `false`.
+	 * @since v0.1.0
+	 */
+	public equals(other: Ipv6Addr | Ipv4Addr | object): boolean {
+		return 'family' in other && this.family === other.family && this.#integerAddress === other.#integerAddress;
+	}
+
 	#toInteger(segments: [number, number, number, number, number, number, number, number]): bigint {
 		let result = 0n;
 		for (const segment of segments) {

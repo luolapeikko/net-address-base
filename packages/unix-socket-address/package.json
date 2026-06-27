@@ -1,6 +1,6 @@
 {
 	"name": "unix-socket-address",
-	"version": "0.0.2",
+	"version": "0.1.0",
 	"description": "Unix domain socket address instances",
 	"main": "./dist/index.cjs",
 	"module": "./dist/index.mjs",

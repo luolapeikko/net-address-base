@@ -7,12 +7,12 @@ describe('SocketAddrV6', function () {
 		const socketAddress = new SocketAddrV6({port: 6372});
 
 		expect(socketAddress.family).toBe('ipv6');
-		expect(socketAddress.address.toString()).toBe('::');
+		expect(socketAddress.address.equals(Ipv6Addr.UNSPECIFIED)).toBe(true);
 		expect(socketAddress.port).toBe(6372);
 		expect(socketAddress.flowlabel).toBe(undefined);
-		expect(socketAddress.toString()).toBe(':::6372');
+		expect(socketAddress.toString()).toBe('[::]:6372');
 		expect(socketAddress).toEqual({
-			address: '::',
+			address: Ipv6Addr.UNSPECIFIED,
 			port: 6372,
 			family: 'ipv6',
 			flowlabel: undefined,
@@ -24,12 +24,12 @@ describe('SocketAddrV6', function () {
 		const socketAddress = new SocketAddrV6({address: ipv6, port: 443, flowlabel: 99});
 
 		expect(socketAddress.family).toBe('ipv6');
-		expect(socketAddress.address).toBe(ipv6.toString());
+		expect(socketAddress.address.equals(ipv6)).toBe(true);
 		expect(socketAddress.port).toBe(443);
 		expect(socketAddress.flowlabel).toBe(99);
-		expect(socketAddress.toString()).toBe('2001:db8::1:443');
+		expect(socketAddress.toString()).toBe('[2001:db8::1]:443');
 		expect(socketAddress).toEqual({
-			address: '2001:db8::1',
+			address: ipv6,
 			port: 443,
 			family: 'ipv6',
 			flowlabel: 99,

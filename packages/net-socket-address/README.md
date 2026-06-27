@@ -13,9 +13,9 @@ npm i net-socket-address net-address @luolapeikko/result-option
 ```typescript
 const socketAddr = new SocketAddrV4({port: 6372});
 // or new SocketAddrV4({addr: Ipv4Addr.UNSPECIFIED, port: 6372});
-tcpServer.listen(socketAddr..asNodeListenerOptions(), () => {});
-udpSocket.bind(socketAddr, () => {});
-tcpServer.listen({...socketAddr.asNodeListenerOptions(), ipv6Only: true}, () => {});
+tcpServer.listen(socketAddr.asNodeListener(), () => {});
+udpSocket.bind(socketAddr.asNodeBind(), () => {});
+tcpServer.listen({...socketAddr.asNodeListener(), ipv6Only: true}, () => {});
 ```
 
 ## Full [Documentation](https://luolapeikko.github.io/net-address-base/)

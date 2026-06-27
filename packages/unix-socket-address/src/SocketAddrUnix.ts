@@ -12,7 +12,7 @@ export class SocketAddrUnix {
 		this.path = path;
 	}
 
-	public asNodeListenerOptions(): {path: string} {
+	public asNodeListener(): {path: string} {
 		return {
 			path: this.path,
 		};
@@ -20,5 +20,15 @@ export class SocketAddrUnix {
 
 	public toString(): string {
 		return this.path;
+	}
+
+	/**
+	 * Compares this Unix socket path with another for equality.
+	 * @param other instance of another Unix socket path to compare with.
+	 * @returns `true` if both paths are equal, otherwise `false`.
+	 * @since v0.1.0
+	 */
+	public equals(other: SocketAddrUnix | object): boolean {
+		return 'family' in other && this.family === other.family && this.path === other.path;
 	}
 }
