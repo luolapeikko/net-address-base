@@ -22,4 +22,3 @@ if (addr.isGlobal()) {
 ```
 
 ## Full [Documentation](https://luolapeikko.github.io/net-address-base/)
-
