@@ -164,4 +164,54 @@ describe('Ipv6Addr', () => {
 			expect(addr.toString()).toBe('2001:db8::1');
 		});
 	});
+	describe('Ipv6Addr multicast scopes', () => {
+		it('should correctly identify multicast interface-local addresses', () => {
+			expect(new Ipv6Addr([0xff01, 0, 0, 0, 0, 0, 0, 1]).isMulticastInterfaceLocal()).toBe(true);
+			expect(new Ipv6Addr([0xff02, 0, 0, 0, 0, 0, 0, 1]).isMulticastInterfaceLocal()).toBe(false);
+			expect(new Ipv6Addr([0xff03, 0, 0, 0, 0, 0, 0, 1]).isMulticastInterfaceLocal()).toBe(false);
+			expect(new Ipv6Addr([0xff04, 0, 0, 0, 0, 0, 0, 1]).isMulticastInterfaceLocal()).toBe(false);
+			expect(new Ipv6Addr([0xff05, 0, 0, 0, 0, 0, 0, 1]).isMulticastInterfaceLocal()).toBe(false);
+			expect(new Ipv6Addr([0xff08, 0, 0, 0, 0, 0, 0, 1]).isMulticastInterfaceLocal()).toBe(false);
+		});
+		it('should correctly identify multicast link-local addresses', () => {
+			expect(new Ipv6Addr([0xff01, 0, 0, 0, 0, 0, 0, 1]).isMulticastLinkLocal()).toBe(false);
+			expect(new Ipv6Addr([0xff02, 0, 0, 0, 0, 0, 0, 1]).isMulticastLinkLocal()).toBe(true);
+			expect(new Ipv6Addr([0xff03, 0, 0, 0, 0, 0, 0, 1]).isMulticastLinkLocal()).toBe(false);
+			expect(new Ipv6Addr([0xff04, 0, 0, 0, 0, 0, 0, 1]).isMulticastLinkLocal()).toBe(false);
+			expect(new Ipv6Addr([0xff05, 0, 0, 0, 0, 0, 0, 1]).isMulticastLinkLocal()).toBe(false);
+			expect(new Ipv6Addr([0xff08, 0, 0, 0, 0, 0, 0, 1]).isMulticastLinkLocal()).toBe(false);
+		});
+		it('should correctly identify multicast realm-local addresses', () => {
+			expect(new Ipv6Addr([0xff01, 0, 0, 0, 0, 0, 0, 1]).isMulticastRealmLocal()).toBe(false);
+			expect(new Ipv6Addr([0xff02, 0, 0, 0, 0, 0, 0, 1]).isMulticastRealmLocal()).toBe(false);
+			expect(new Ipv6Addr([0xff03, 0, 0, 0, 0, 0, 0, 1]).isMulticastRealmLocal()).toBe(true);
+			expect(new Ipv6Addr([0xff04, 0, 0, 0, 0, 0, 0, 1]).isMulticastRealmLocal()).toBe(false);
+			expect(new Ipv6Addr([0xff05, 0, 0, 0, 0, 0, 0, 1]).isMulticastRealmLocal()).toBe(false);
+			expect(new Ipv6Addr([0xff08, 0, 0, 0, 0, 0, 0, 1]).isMulticastRealmLocal()).toBe(false);
+		});
+		it('should correctly identify multicast admin-local addresses', () => {
+			expect(new Ipv6Addr([0xff01, 0, 0, 0, 0, 0, 0, 1]).isMulticastAdminLocal()).toBe(false);
+			expect(new Ipv6Addr([0xff02, 0, 0, 0, 0, 0, 0, 1]).isMulticastAdminLocal()).toBe(false);
+			expect(new Ipv6Addr([0xff03, 0, 0, 0, 0, 0, 0, 1]).isMulticastAdminLocal()).toBe(false);
+			expect(new Ipv6Addr([0xff04, 0, 0, 0, 0, 0, 0, 1]).isMulticastAdminLocal()).toBe(true);
+			expect(new Ipv6Addr([0xff05, 0, 0, 0, 0, 0, 0, 1]).isMulticastAdminLocal()).toBe(false);
+			expect(new Ipv6Addr([0xff08, 0, 0, 0, 0, 0, 0, 1]).isMulticastAdminLocal()).toBe(false);
+		});
+		it('should correctly identify multicast site-local addresses', () => {
+			expect(new Ipv6Addr([0xff01, 0, 0, 0, 0, 0, 0, 1]).isMulticastSiteLocal()).toBe(false);
+			expect(new Ipv6Addr([0xff02, 0, 0, 0, 0, 0, 0, 1]).isMulticastSiteLocal()).toBe(false);
+			expect(new Ipv6Addr([0xff03, 0, 0, 0, 0, 0, 0, 1]).isMulticastSiteLocal()).toBe(false);
+			expect(new Ipv6Addr([0xff04, 0, 0, 0, 0, 0, 0, 1]).isMulticastSiteLocal()).toBe(false);
+			expect(new Ipv6Addr([0xff05, 0, 0, 0, 0, 0, 0, 1]).isMulticastSiteLocal()).toBe(true);
+			expect(new Ipv6Addr([0xff08, 0, 0, 0, 0, 0, 0, 1]).isMulticastSiteLocal()).toBe(false);
+		});
+		it('should correctly identify multicast organization-local addresses', () => {
+			expect(new Ipv6Addr([0xff01, 0, 0, 0, 0, 0, 0, 1]).isMulticastOrganizationLocal()).toBe(false);
+			expect(new Ipv6Addr([0xff02, 0, 0, 0, 0, 0, 0, 1]).isMulticastOrganizationLocal()).toBe(false);
+			expect(new Ipv6Addr([0xff03, 0, 0, 0, 0, 0, 0, 1]).isMulticastOrganizationLocal()).toBe(false);
+			expect(new Ipv6Addr([0xff04, 0, 0, 0, 0, 0, 0, 1]).isMulticastOrganizationLocal()).toBe(false);
+			expect(new Ipv6Addr([0xff05, 0, 0, 0, 0, 0, 0, 1]).isMulticastOrganizationLocal()).toBe(false);
+			expect(new Ipv6Addr([0xff08, 0, 0, 0, 0, 0, 0, 1]).isMulticastOrganizationLocal()).toBe(true);
+		});
+	});
 });

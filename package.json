@@ -7,20 +7,22 @@
     "build": "pnpm -r build",
     "pretest": "pnpm -r run build && pnpm -r run validate",
     "test": "vitest run --typecheck --coverage",
-    "lint": "biome check",
+    "test:cli": "vitest run --typecheck --reporter=minimal",
+    "lint": "biome check --reporter=concise",
     "validate": "pnpm -r validate",
     "docs": "typedoc --options typedoc.json --tsconfig tsconfig.workspace.json"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.12",
-    "@vitest/coverage-v8": "^4.1.4",
+    "@biomejs/biome": "2.5.1",
+    "@vitest/coverage-v8": "^4.1.9",
     "c8": "^11.0.0",
-    "tsdown": "^0.21.9",
+    "lefthook": "^2.1.9",
+    "tsdown": "^0.22.3",
     "typedoc": "^0.28.19",
-    "typedoc-plugin-dt-links": "^2.0.51",
+    "typedoc-plugin-dt-links": "^2.0.60",
     "typedoc-plugin-mdn-links": "^5.1.1",
-    "typescript": "^5.9.3",
-    "vitest": "^4.1.4"
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.9"
   },
-  "packageManager": "pnpm@10.33.0+sha512.10568bb4a6afb58c9eb3630da90cc9516417abebd3fabbe6739f0ae795728da1491e9db5a544c76ad8eb7570f5c4bb3d6c637b2cb41bfdcdb47fa823c8649319"
+  "packageManager": "pnpm@10.34.3+sha512.f2c531b08829d7be7f03c90addc266615f9c5477463e4bf1d275cb263ce9ea57cf0d5599110d94649a9bb3fed9f0b5efcea74a7016b61532a24cb9ad87860c1d"
 }

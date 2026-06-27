@@ -169,6 +169,76 @@ export class Ipv6Addr {
 	}
 
 	/**
+	 * Checks whether this address is a multicast interface-local address.
+	 * @see https://datatracker.ietf.org/doc/html/rfc4291#section-2.7
+	 * @returns `true` when the address is in `ff01::/16`, otherwise `false`.
+	 * @since v0.0.2
+	 */
+	public isMulticastInterfaceLocal(): boolean {
+		return this.#match(0xff010000000000000000000000000000n, 16);
+	}
+
+	/**
+	 * Checks whether this address is a multicast link-local address.
+	 * @see https://datatracker.ietf.org/doc/html/rfc4291#section-2.7
+	 * @returns `true` when the address is in `ff02::/16`, otherwise `false`.
+	 * @since v0.0.2
+	 */
+	public isMulticastLinkLocal(): boolean {
+		return this.#match(0xff020000000000000000000000000000n, 16);
+	}
+
+	/**
+	 * Checks whether this address is a multicast realm-local address.
+	 * @see https://datatracker.ietf.org/doc/html/rfc4291#section-2.7
+	 * @returns `true` when the address is in `ff03::/16`, otherwise `false`.
+	 * @since v0.0.2
+	 */
+	public isMulticastRealmLocal(): boolean {
+		return this.#match(0xff030000000000000000000000000000n, 16);
+	}
+
+	/**
+	 * Checks whether this address is a multicast admin-local address.
+	 * @see https://datatracker.ietf.org/doc/html/rfc4291#section-2.7
+	 * @returns `true` when the address is in `ff04::/16`, otherwise `false`.
+	 * @since v0.0.2
+	 */
+	public isMulticastAdminLocal(): boolean {
+		return this.#match(0xff040000000000000000000000000000n, 16);
+	}
+
+	/**
+	 * Checks whether this address is a multicast site-local address.
+	 * @see https://datatracker.ietf.org/doc/html/rfc4291#section-2.7
+	 * @returns `true` when the address is in `ff05::/16`, otherwise `false`.
+	 * @since v0.0.2
+	 */
+	public isMulticastSiteLocal(): boolean {
+		return this.#match(0xff050000000000000000000000000000n, 16);
+	}
+
+	/**
+	 * Checks whether this address is a multicast organization-local address.
+	 * @see https://datatracker.ietf.org/doc/html/rfc4291#section-2.7
+	 * @returns `true` when the address is in `ff08::/16`, otherwise `false`.
+	 * @since v0.0.2
+	 */
+	public isMulticastOrganizationLocal(): boolean {
+		return this.#match(0xff080000000000000000000000000000n, 16);
+	}
+
+	/**
+	 * Checks whether this address is a multicast global address.
+	 * @see https://datatracker.ietf.org/doc/html/rfc4291#section-2.7
+	 * @returns `true` when the address is in `ff0e::/16`, otherwise `false`.
+	 * @since v0.0.2
+	 */
+	public isMulticastGlobal(): boolean {
+		return this.#match(0xff0e0000000000000000000000000000n, 16);
+	}
+
+	/**
 	 * Checks whether this address is an IPv4-mapped IPv6 address.
 	 * @returns `true` when the address is in `::ffff:0:0/96`, otherwise `false`.
 	 * @since v0.0.1
