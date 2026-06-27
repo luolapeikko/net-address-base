@@ -22,6 +22,7 @@
     "typedoc-plugin-dt-links": "^2.0.60",
     "typedoc-plugin-mdn-links": "^5.1.1",
     "typescript": "^6.0.3",
+    "vite": "^8.1.0",
     "vitest": "^4.1.9"
   },
   "packageManager": "pnpm@10.34.3+sha512.f2c531b08829d7be7f03c90addc266615f9c5477463e4bf1d275cb263ce9ea57cf0d5599110d94649a9bb3fed9f0b5efcea74a7016b61532a24cb9ad87860c1d"
