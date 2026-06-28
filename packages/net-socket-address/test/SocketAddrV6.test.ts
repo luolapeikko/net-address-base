@@ -43,4 +43,14 @@ describe('SocketAddrV6', function () {
 
 		expect(socketAddress.flowlabel).toBe(77);
 	});
+
+	it('creates clone from toString', function () {
+		const socketAddress = new SocketAddrV6({address: Ipv6Addr.from('2001:db8::1').unwrap(), port: 443, flowlabel: 99});
+		const clonedAddress = SocketAddrV6.from(socketAddress.toString()).unwrap();
+		clonedAddress.flowlabel = 99; // Ensure flowlabel is set for comparison
+		expect(socketAddress.family).toBe('ipv6');
+		expect(socketAddress.port).toBe(443);
+		expect(socketAddress.toString()).toBe('[2001:db8::1]:443');
+		expect(socketAddress).toEqual(clonedAddress);
+	});
 });

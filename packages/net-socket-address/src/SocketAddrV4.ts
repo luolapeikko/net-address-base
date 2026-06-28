@@ -1,3 +1,4 @@
+import {Err, type IResult, Ok} from '@luolapeikko/result-option';
 import {Ipv4Addr} from 'net-address';
 
 /**
@@ -13,6 +14,27 @@ export class SocketAddrV4 {
 	public readonly port: number;
 	public readonly address: Ipv4Addr;
 	public readonly family = 'ipv4';
+
+	/**
+	 * Creates a new `SocketAddrV4` instance from a string representation.
+	 * @param value - The string representation of the socket address in the format "address:port".
+	 * @returns An `IResult` containing the `SocketAddrV4` instance or a `TypeError` if the input is invalid.
+	 * @since v0.1.1
+	 */
+	public static from(value: string): IResult<SocketAddrV4, TypeError> {
+		const match = value.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3}):(\d+)$/);
+		if (!match) {
+			return Err(new TypeError(`${value} is invalid ipv4 value`));
+		}
+		const octets = match.slice(1, 5).map(Number);
+		const port = Number(match[5]);
+		if (octets.some((o) => o > 255)) {
+			return Err(new TypeError(`${value} is invalid ipv4 value`));
+		}
+		const addr = new Ipv4Addr(octets[0], octets[1], octets[2], octets[3]);
+		return Ok(new SocketAddrV4({addr, port}));
+	}
+
 	/**
 	 * Creates a new `SocketAddrV4` instance.
 	 * @param options - The options for creating the socket address.

@@ -1,6 +1,6 @@
 {
 	"name": "net-socket-address",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Network socket address instances",
 	"main": "./dist/index.cjs",
 	"module": "./dist/index.mjs",
@@ -36,9 +36,11 @@
 	},
 	"homepage": "https://github.com/luolapeikko/net-address-base#readme",
 	"devDependencies": {
+		"@luolapeikko/result-option": "2.2.1",
 		"net-address": "workspace:*"
 	},
 	"peerDependencies": {
+		"@luolapeikko/result-option": ">= 2.0.0",
 		"net-address": ">= 0.0.1"
 	}
 }

@@ -31,4 +31,13 @@ describe('SocketAddrV4', function () {
 			family: 'ipv4',
 		});
 	});
+
+	it('creates clone from toString', function () {
+		const socketAddress = new SocketAddrV4({addr: Ipv4Addr.from('192.168.1.10').unwrap(), port: 443});
+		const clonedAddress = SocketAddrV4.from(socketAddress.toString()).unwrap();
+		expect(socketAddress.family).toBe('ipv4');
+		expect(socketAddress.port).toBe(443);
+		expect(socketAddress.toString()).toBe('192.168.1.10:443');
+		expect(socketAddress).toEqual(clonedAddress);
+	});
 });

@@ -122,14 +122,230 @@ describe('Ipv6Addr', () => {
 
 	describe('Ipv6Addr.from', () => {
 		it('should create an Ipv6Addr from a valid string', () => {
-			const result = Ipv6Addr.from('2001:db8::1');
-			expect(result.isOk).toBe(true);
-			expect(result.unwrap().toString()).toBe('2001:db8::1');
+			expect(Ipv6Addr.from('2001:db8::1').isOk).toBe(true);
 		});
 
 		it('should return Err for an invalid string', () => {
 			expect(Ipv6Addr.from('invalid').isErr).toBe(true);
 			expect(Ipv6Addr.from('2001:db8:::1').isErr).toBe(true);
+		});
+
+		// Special addresses
+		it('should parse the unspecified address', () => {
+			const result = Ipv6Addr.from('::');
+			expect(result.isOk).toBe(true);
+			expect(result.unwrap().isUnspecified()).toBe(true);
+			expect(result.unwrap().toString()).toBe('::');
+		});
+
+		it('should parse the loopback address', () => {
+			const result = Ipv6Addr.from('::1');
+			expect(result.isOk).toBe(true);
+			expect(result.unwrap().isLoopback()).toBe(true);
+			expect(result.unwrap().toString()).toBe('::1');
+		});
+
+		// Link-local addresses
+		it('should parse link-local addresses', () => {
+			const result = Ipv6Addr.from('fe80::1');
+			expect(result.isOk).toBe(true);
+			expect(result.unwrap().isUnicastLinkLocal()).toBe(true);
+			expect(result.unwrap().toString()).toBe('fe80::1');
+		});
+
+		it('should parse link-local with full format', () => {
+			const result = Ipv6Addr.from('fe80:0000:0000:0000:0000:0000:0000:0001');
+			expect(result.isOk).toBe(true);
+			expect(result.unwrap().isUnicastLinkLocal()).toBe(true);
+		});
+
+		// Unique local addresses (Fc00::/7)
+		it('should parse unique local addresses', () => {
+			const result1 = Ipv6Addr.from('fc00::1');
+			expect(result1.isOk).toBe(true);
+			expect(result1.unwrap().isUniqueLocal()).toBe(true);
+
+			const result2 = Ipv6Addr.from('fd00::1');
+			expect(result2.isOk).toBe(true);
+			expect(result2.unwrap().isUniqueLocal()).toBe(true);
+		});
+
+		// Multicast addresses (ff00::/8)
+		it('should parse multicast interface-local (ff01::/16)', () => {
+			const result = Ipv6Addr.from('ff01::1');
+			expect(result.isOk).toBe(true);
+			expect(result.unwrap().isMulticast()).toBe(true);
+			expect(result.unwrap().isMulticastInterfaceLocal()).toBe(true);
+		});
+
+		it('should parse multicast link-local (ff02::/16)', () => {
+			const result = Ipv6Addr.from('ff02::1');
+			expect(result.isOk).toBe(true);
+			expect(result.unwrap().isMulticast()).toBe(true);
+			expect(result.unwrap().isMulticastLinkLocal()).toBe(true);
+		});
+
+		it('should parse multicast realm-local (ff03::/16)', () => {
+			const result = Ipv6Addr.from('ff03::1');
+			expect(result.isOk).toBe(true);
+			expect(result.unwrap().isMulticast()).toBe(true);
+			expect(result.unwrap().isMulticastRealmLocal()).toBe(true);
+		});
+
+		it('should parse multicast admin-local (ff04::/16)', () => {
+			const result = Ipv6Addr.from('ff04::1');
+			expect(result.isOk).toBe(true);
+			expect(result.unwrap().isMulticast()).toBe(true);
+			expect(result.unwrap().isMulticastAdminLocal()).toBe(true);
+		});
+
+		it('should parse multicast site-local (ff05::/16)', () => {
+			const result = Ipv6Addr.from('ff05::1');
+			expect(result.isOk).toBe(true);
+			expect(result.unwrap().isMulticast()).toBe(true);
+			expect(result.unwrap().isMulticastSiteLocal()).toBe(true);
+		});
+
+		it('should parse multicast organization-local (ff08::/16)', () => {
+			const result = Ipv6Addr.from('ff08::1');
+			expect(result.isOk).toBe(true);
+			expect(result.unwrap().isMulticast()).toBe(true);
+			expect(result.unwrap().isMulticastOrganizationLocal()).toBe(true);
+		});
+
+		it('should parse multicast global (ff0e::/16)', () => {
+			const result = Ipv6Addr.from('ff0e::1');
+			expect(result.isOk).toBe(true);
+			expect(result.unwrap().isMulticast()).toBe(true);
+		});
+
+		it('should parse well-known multicast addresses', () => {
+			// All nodes on link
+			const allNodes = Ipv6Addr.from('ff02::1');
+			expect(allNodes.isOk).toBe(true);
+
+			// All routers on link
+			const allRouters = Ipv6Addr.from('ff02::2');
+			expect(allRouters.isOk).toBe(true);
+
+			// mDNS (Multicast DNS)
+			const mdns = Ipv6Addr.from('ff02::fb');
+			expect(mdns.isOk).toBe(true);
+
+			// SSDP (Simple Service Discovery Protocol)
+			const ssdp = Ipv6Addr.from('ff02::c');
+			expect(ssdp.isOk).toBe(true);
+
+			// DHCPv6 servers and relay agents
+			const dhcpv6 = Ipv6Addr.from('ff02::1:2');
+			expect(dhcpv6.isOk).toBe(true);
+		});
+
+		// Documentation addresses
+		it('should parse documentation addresses (2001:db8::/32)', () => {
+			const result = Ipv6Addr.from('2001:db8::1');
+			expect(result.isOk).toBe(true);
+			expect(result.unwrap().isDocumentation()).toBe(true);
+		});
+
+		it('should parse documentation addresses (3fff::/20)', () => {
+			const result = Ipv6Addr.from('3fff::1');
+			expect(result.isOk).toBe(true);
+			expect(result.unwrap().isDocumentation()).toBe(true);
+		});
+
+		// Benchmarking addresses
+		it('should parse benchmarking addresses (2001:2::/48)', () => {
+			const result = Ipv6Addr.from('2001:2::1');
+			expect(result.isOk).toBe(true);
+			expect(result.unwrap().isBenchmarking()).toBe(true);
+		});
+
+		// IPv4-mapped addresses
+		it('should parse IPv4-mapped addresses', () => {
+			const result = Ipv6Addr.from('::ffff:192.168.1.1');
+			expect(result.isOk).toBe(true);
+			expect(result.unwrap().isIpv4Mapped()).toBe(true);
+			expect(result.unwrap().toString()).toMatch(/::ffff:/);
+		});
+
+		it('should parse IPv4-compatible addresses', () => {
+			const result = Ipv6Addr.from('::192.168.1.1');
+			expect(result.isOk).toBe(true);
+			// IPv4-compatible addresses are parsed as regular IPv6 segments
+			expect(result.unwrap().toString()).toMatch(/^::/);
+		});
+
+		// Various compression patterns
+		it('should parse addresses with compression at the beginning', () => {
+			const result = Ipv6Addr.from('::1234:5678');
+			expect(result.isOk).toBe(true);
+			expect(result.unwrap().toString()).toContain('1234:5678');
+		});
+
+		it('should parse addresses with compression at the end', () => {
+			const result = Ipv6Addr.from('2001:db8::');
+			expect(result.isOk).toBe(true);
+			expect(result.unwrap().toString()).toContain('2001:db8');
+		});
+
+		it('should parse addresses with compression in the middle', () => {
+			const result = Ipv6Addr.from('2001:db8::cafe:1');
+			expect(result.isOk).toBe(true);
+		});
+
+		// Full addresses without compression
+		it('should parse full addresses without compression', () => {
+			const result = Ipv6Addr.from('2001:0db8:0000:0000:0000:0000:0000:0001');
+			expect(result.isOk).toBe(true);
+			expect(result.unwrap().toString()).toBe('2001:db8::1');
+		});
+
+		// Leading zeros
+		it('should parse addresses with leading zeros', () => {
+			const result = Ipv6Addr.from('2001:00db:0000:0000:0000:0000:0000:0001');
+			expect(result.isOk).toBe(true);
+		});
+
+		// Single zero segments
+		it('should parse addresses with single zero segments', () => {
+			const result = Ipv6Addr.from('2001:db8:0:0:0:0:0:1');
+			expect(result.isOk).toBe(true);
+		});
+
+		// All hex digits
+		it('should parse addresses with all hex digits', () => {
+			const result = Ipv6Addr.from('abcd:ef01:2345:6789:abcd:ef01:2345:6789');
+			expect(result.isOk).toBe(true);
+		});
+
+		it('should parse addresses with uppercase hex digits', () => {
+			const result = Ipv6Addr.from('ABCD:EF01:2345:6789:ABCD:EF01:2345:6789');
+			expect(result.isOk).toBe(true);
+		});
+
+		it('should parse addresses with mixed case hex digits', () => {
+			const result = Ipv6Addr.from('AbCd:Ef01:2345:6789:aBcD:eF01:2345:6789');
+			expect(result.isOk).toBe(true);
+		});
+
+		// Edge cases
+		it('should parse addresses with max values', () => {
+			const result = Ipv6Addr.from('ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff');
+			expect(result.isOk).toBe(true);
+		});
+
+		it('should parse addresses with single segment', () => {
+			const result = Ipv6Addr.from('1::');
+			expect(result.isOk).toBe(true);
+		});
+		it('should reject invalid addresses', () => {
+			expect(Ipv6Addr.from('1:2:3:4:5:6:7:8:9').err()?.message).toBe(`"1:2:3:4:5:6:7:8:9" is invalid ipv6 value`);
+			expect(Ipv6Addr.from('10000::1').err()?.message).toBe(`"10000::1" is invalid ipv6 value`);
+			expect(Ipv6Addr.from('gggg::1').err()?.message).toBe(`"gggg::1" is invalid ipv6 value`);
+			expect(Ipv6Addr.from('2001::db8::1').err()?.message).toBe(`"2001::db8::1" is invalid ipv6 value`);
+			expect(Ipv6Addr.from('').err()?.message).toBe(`"" is invalid ipv6 value`);
+			expect(Ipv6Addr.from('::256.1.1.1').err()?.message).toBe(`"::256.1.1.1" is invalid ipv6 value`);
 		});
 	});
 

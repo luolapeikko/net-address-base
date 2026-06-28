@@ -1,3 +1,4 @@
+import {Err, type IResult, Ok} from '@luolapeikko/result-option';
 import {Ipv6Addr} from 'net-address';
 
 /**
@@ -9,10 +10,30 @@ import {Ipv6Addr} from 'net-address';
  * @since v0.0.1
  */
 export class SocketAddrV6 {
+	private static regex = /^\[(.+)\]:(\d+)$/;
+
 	public readonly port: number;
 	public readonly family = 'ipv6';
 	public readonly address: Ipv6Addr;
 	public flowlabel?: number;
+
+	/**
+	 * Creates a new `SocketAddrV6` instance from a string representation.
+	 * @param value - The string representation of the socket address in the format "[address]:port".
+	 * @returns An `IResult` containing the `SocketAddrV6` instance or unknown/Error if the input is invalid.
+	 * @since v0.1.1
+	 */
+	public static from(value: string): IResult<SocketAddrV6> {
+		const match = value.match(SocketAddrV6.regex);
+		if (!match) {
+			return Err(new TypeError(`${value} have invalid ipv6 value`));
+		}
+		const port = Number(match[2]);
+		if (port < 0 || port > 65535) {
+			return Err(new TypeError(`${value} have invalid port value`));
+		}
+		return Ipv6Addr.from(match[1]).andThen((address) => Ok(new SocketAddrV6({address, port})));
+	}
 
 	/**
 	 * Creates a new `SocketAddrV6` instance.

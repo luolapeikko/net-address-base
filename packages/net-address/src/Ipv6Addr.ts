@@ -1,4 +1,4 @@
-import {Err, type IOption, type IResult, None, Ok, Some} from '@luolapeikko/result-option';
+import {Err, type IOption, type IResult, None, Ok, Result, Some} from '@luolapeikko/result-option';
 import {Ipv4Addr} from './Ipv4Addr';
 
 /**
@@ -20,23 +20,31 @@ export class Ipv6Addr {
 	 * const addr = Ipv6Addr.from('2001:db8::1').unwrap();
 	 * @since v0.0.1
 	 */
-	public static from(value: string): IResult<Ipv6Addr> {
-		if (!Ipv6Addr.regex.test(value)) {
-			return Err(new TypeError(`${value} is invalid ipv6 value`));
+	public static from(value: string): IResult<Ipv6Addr, TypeError | RangeError> {
+		if (typeof value !== 'string' || !Ipv6Addr.regex.test(value)) {
+			return Err(new TypeError(`${JSON.stringify(value)} is invalid ipv6 value`));
 		}
-		try {
-			const {leftParts, rightParts, embeddedIpv4} = Ipv6Addr.#parseComponents(value);
-
-			const leftSegs = leftParts.map((p) => parseInt(p, 16));
-			const rightSegs = rightParts.map((p) => parseInt(p, 16));
-
-			const missingLen = 8 - (leftSegs.length + rightSegs.length + embeddedIpv4.length);
-			const segments = [...leftSegs, ...Array(missingLen).fill(0), ...rightSegs, ...embeddedIpv4];
-
-			return Ok(new Ipv6Addr(segments as [number, number, number, number, number, number, number, number]));
-		} catch (err) {
-			return Err(err);
-		}
+		return Ipv6Addr.#parseComponents(value).andThen(({leftSegs, rightSegs, embeddedIpv4}) => {
+			const segments: number[] = Array(8).fill(0);
+			// Place left segments
+			for (let i = 0; i < leftSegs.length; i++) {
+				segments[i] = leftSegs[i];
+			}
+			// Place right segments
+			const rightStartIdx = 8 - rightSegs.length - embeddedIpv4.length;
+			for (let i = 0; i < rightSegs.length; i++) {
+				segments[rightStartIdx + i] = rightSegs[i];
+			}
+			// Place embedded IPv4
+			for (let i = 0; i < embeddedIpv4.length; i++) {
+				segments[rightStartIdx + rightSegs.length + i] = embeddedIpv4[i];
+			}
+			try {
+				return Ok(new Ipv6Addr(segments as [number, number, number, number, number, number, number, number]));
+			} catch (err) {
+				return Err(err as RangeError);
+			}
+		});
 	}
 
 	/**
@@ -61,26 +69,44 @@ export class Ipv6Addr {
 		}
 	}
 
-	static #parseComponents(value: string) {
+	static #parseInt(value: string, radix: number): IResult<number, TypeError> {
+		const output = parseInt(value, radix);
+		if (Number.isNaN(output)) {
+			return Err(new TypeError(`${value} is not a valid number`));
+		}
+		return Ok(output);
+	}
+
+	static #parseComponents(value: string): IResult<{leftSegs: number[]; rightSegs: number[]; embeddedIpv4: number[]}, TypeError> {
 		const components = value.split('::');
 		const leftParts = components[0].split(':').filter((x) => x !== '');
 		const rightParts = components.length > 1 ? components[1].split(':').filter((x) => x !== '') : [];
 		let embeddedIpv4: number[] = [];
 		const lastPart = rightParts[rightParts.length - 1] ?? leftParts[leftParts.length - 1];
+		// check if the last part is an embedded IPv4 address (e.g., ::ffff:192.168.0.1)
 		if (lastPart?.includes('.')) {
-			embeddedIpv4 = Ipv6Addr.#parseEmbeddedIpv4(lastPart);
+			const embeddedIpv4Result = Ipv6Addr.#parseEmbeddedIpv4(lastPart);
+			if (embeddedIpv4Result.isErr) {
+				return embeddedIpv4Result;
+			}
+			embeddedIpv4 = embeddedIpv4Result.ok();
 			if (rightParts.length > 0) {
 				rightParts.pop();
 			} else {
 				leftParts.pop();
 			}
 		}
-		return {leftParts, rightParts, embeddedIpv4};
+		return Result.tupleFlow(
+			Result.asArray(leftParts.map((p) => Ipv6Addr.#parseInt(p, 16))),
+			() => Result.asArray(rightParts.map((p) => Ipv6Addr.#parseInt(p, 16))),
+			(leftSegs, rightSegs) => Ok({leftSegs, rightSegs, embeddedIpv4}),
+		);
 	}
 
-	static #parseEmbeddedIpv4(value: string): number[] {
-		const ipv4Octets = value.split('.').map(Number);
-		return [(ipv4Octets[0] << 8) | ipv4Octets[1], (ipv4Octets[2] << 8) | ipv4Octets[3]];
+	static #parseEmbeddedIpv4(value: string): IResult<number[], TypeError> {
+		return Result.asArray(value.split('.').map((octet) => Ipv6Addr.#parseInt(octet, 10))).andThen((octets) =>
+			Ok([(octets[0] << 8) | octets[1], (octets[2] << 8) | octets[3]]),
+		);
 	}
 
 	/**
@@ -108,13 +134,22 @@ export class Ipv6Addr {
 	public readonly family = 'ipv6';
 
 	#integerAddress: bigint;
+
+	/**
+	 * Creates a new IPv6 address instance.
+	 * @param value - A bigint representing the IPv6 address or an array of 8 numbers representing the segments of the address.
+	 * @throws {RangeError} If the segments array does not have exactly 8 elements or if any segment is out of range.
+	 * @throws {TypeError} If the input is neither a bigint nor an array of 8 numbers.
+	 */
 	public constructor(value: bigint);
 	public constructor(segments: [number, number, number, number, number, number, number, number]);
 	public constructor(valueOrSegments: [number, number, number, number, number, number, number, number] | bigint) {
-		if (Array.isArray(valueOrSegments)) {
+		if (Array.isArray(valueOrSegments) && valueOrSegments.every((seg) => typeof seg === 'number')) {
 			this.#integerAddress = this.#toInteger(valueOrSegments);
-		} else {
+		} else if (typeof valueOrSegments === 'bigint') {
 			this.#integerAddress = valueOrSegments;
+		} else {
+			throw new TypeError('Invalid constructor argument. Must be a bigint or an array of 8 numbers.');
 		}
 	}
 
@@ -401,11 +436,20 @@ export class Ipv6Addr {
 		return 'family' in other && this.family === other.family && this.#integerAddress === other.#integerAddress;
 	}
 
+	/**
+	 * Converts an array of IPv6 segments to a bigint representation.
+	 * @param segments An array of 8 numbers representing the IPv6 segments.
+	 * @returns A bigint representing the IPv6 address.
+	 * @throws {RangeError} If the segments array does not have exactly 8 elements or if any segment is out of range.
+	 */
 	#toInteger(segments: [number, number, number, number, number, number, number, number]): bigint {
+		if (segments.length !== 8) {
+			throw new RangeError('IPv6 address must have exactly 8 segments');
+		}
 		let result = 0n;
 		for (const segment of segments) {
 			if (segment < 0 || segment > 0xffff) {
-				throw new Error('IPv6 segment must be between 0 and 65535');
+				throw new RangeError('IPv6 segment must be between 0 and 65535');
 			}
 			result = (result << 16n) | BigInt(segment);
 		}

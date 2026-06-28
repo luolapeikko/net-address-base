@@ -79,6 +79,8 @@ export class Ipv4Addr {
 	 * @param num2 The second octet.
 	 * @param num3 The third octet.
 	 * @param num4 The fourth octet.
+	 * @throws {RangeError} If the integer values are not in the range of 0 to 255 for each octet.
+	 * @throws {TypeError} If the input is not a number.
 	 * @example
 	 * new Ipv4Addr(192, 168, 0, 1) // creates the address `192.168.0.1`
 	 */
@@ -86,12 +88,20 @@ export class Ipv4Addr {
 	/**
 	 * Creates a new IPv4 address from an integer value.
 	 * @param integerValue The integer representation of the IPv4 address.
+	 * @throws {RangeError} If the integer value is not in the range of 0 to 0xffffffff.
+	 * @throws {TypeError} If the input is not a number.
 	 * @example
 	 * new Ipv4Addr(0xc0a80001) // creates the address `192.168.0.1` from the integer value `0xc0a80001`
 	 */
 	public constructor(integerValue: number);
 	public constructor(...args: [number] | [number, number, number, number]) {
+		if (!Array.isArray(args) || args.every((arg) => typeof arg !== 'number')) {
+			throw new TypeError('Invalid constructor argument. Must be a number or an array of 4 numbers.');
+		}
 		if (args.length === 1) {
+			if (args[0] < 0 || args[0] > 0xffffffff) {
+				throw new RangeError('IPv4 integer value must be between 0 and 0xffffffff');
+			}
 			this.#integerAddress = args[0];
 		} else {
 			this.#integerAddress = this.#toInteger(args[0], args[1], args[2], args[3]);
@@ -279,7 +289,7 @@ export class Ipv4Addr {
 	#toInteger(num1: number, num2: number, num3: number, num4: number): number {
 		for (const octet of [num1, num2, num3, num4]) {
 			if (octet < 0 || octet > 255) {
-				throw new Error('IPv4 octet must be between 0 and 255');
+				throw new RangeError('IPv4 octet must be between 0 and 255');
 			}
 		}
 		return ((num1 << 24) | (num2 << 16) | (num3 << 8) | num4) >>> 0;
@@ -295,7 +305,7 @@ export class Ipv4Addr {
 
 	#match(network: number, prefix: number): boolean {
 		if (prefix < 0 || prefix > 32) {
-			throw new Error('Invalid prefix length');
+			throw new RangeError('Invalid prefix length');
 		}
 		const mask = prefix === 0 ? 0 : (~0 << (32 - prefix)) >>> 0;
 		return (this.#integerAddress & mask) === (network & mask);

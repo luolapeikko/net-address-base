@@ -50,6 +50,9 @@ importers:
 
   packages/net-socket-address:
     devDependencies:
+      '@luolapeikko/result-option':
+        specifier: 2.2.1
+        version: 2.2.1
       net-address:
         specifier: workspace:*
         version: link:../net-address

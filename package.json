@@ -6,7 +6,7 @@
   "scripts": {
     "build": "pnpm -r build",
     "pretest": "pnpm -r run build && pnpm -r run validate",
-    "test": "vitest run --typecheck --coverage",
+    "test": "vitest run --typecheck --reporter=minimal --coverage",
     "test:cli": "vitest run --typecheck --reporter=minimal",
     "lint": "biome check --reporter=concise",
     "validate": "pnpm -r validate",
