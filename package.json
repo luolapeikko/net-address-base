@@ -7,8 +7,10 @@
     "build": "pnpm -r build",
     "pretest": "pnpm -r run build && pnpm -r run validate",
     "test": "vitest run --typecheck --reporter=minimal --coverage",
+    "test:ci": "vitest run --typecheck --reporter=github-actions",
     "test:cli": "vitest run --typecheck --reporter=minimal",
     "lint": "biome check --reporter=concise",
+    "lint:ci": "biome ci --reporter=github",
     "validate": "pnpm -r validate",
     "docs": "typedoc --options typedoc.json --tsconfig tsconfig.workspace.json"
   },
