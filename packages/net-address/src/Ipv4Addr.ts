@@ -74,6 +74,13 @@ export class Ipv4Addr {
 	#integerAddress: number;
 
 	/**
+	 * Gets the raw integer representation of the IPv4 address.
+	 */
+	public get value(): number {
+		return this.#integerAddress;
+	}
+
+	/**
 	 * Creates a new IPv4 address from four octets.
 	 * @param num1 The first octet.
 	 * @param num2 The second octet.
@@ -95,8 +102,8 @@ export class Ipv4Addr {
 	 */
 	public constructor(integerValue: number);
 	public constructor(...args: [number] | [number, number, number, number]) {
-		if (!Array.isArray(args) || args.every((arg) => typeof arg !== 'number')) {
-			throw new TypeError('Invalid constructor argument. Must be a number or an array of 4 numbers.');
+		if ((args.length !== 1 && args.length !== 4) || args.some((arg) => typeof arg !== 'number')) {
+			throw new TypeError('Invalid Ipv4Addr arguments. Expected either 1 number (integer value) or 4 numbers (octets).');
 		}
 		if (args.length === 1) {
 			if (args[0] < 0 || args[0] > 0xffffffff) {

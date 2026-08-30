@@ -16,17 +16,17 @@
     "docs": "typedoc --options typedoc.json --tsconfig tsconfig.workspace.json"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.1",
-    "@vitest/coverage-v8": "^4.1.9",
-    "c8": "^11.0.0",
-    "lefthook": "^2.1.9",
-    "tsdown": "^0.22.3",
-    "typedoc": "^0.28.19",
-    "typedoc-plugin-dt-links": "^2.0.60",
+    "@biomejs/biome": "2.5.11",
+    "@vitest/coverage-v8": "^4.1.11",
+    "c8": "^12.0.0",
+    "lefthook": "^2.1.12",
+    "tsdown": "^0.22.14",
+    "typedoc": "^0.28.20",
+    "typedoc-plugin-dt-links": "^2.0.70",
     "typedoc-plugin-mdn-links": "^5.1.1",
     "typescript": "^6.0.3",
-    "vite": "^8.1.0",
-    "vitest": "^4.1.9"
+    "vite": "^8.2.2",
+    "vitest": "^4.1.11"
   },
   "packageManager": "pnpm@10.34.3+sha512.f2c531b08829d7be7f03c90addc266615f9c5477463e4bf1d275cb263ce9ea57cf0d5599110d94649a9bb3fed9f0b5efcea74a7016b61532a24cb9ad87860c1d"
 }

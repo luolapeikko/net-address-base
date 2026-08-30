@@ -4,10 +4,10 @@ import {Ipv4Addr} from 'net-address';
 /**
  * Represents an IPv4 socket address, consisting of an IPv4 address and a port number.
  * @example
- * const socketAddr = new SocketAddrV4({port: 6372}); // new SocketAddrV4({addr: Ipv4Addr.UNSPECIFIED, port: 6372});
- * tcpServer.listen(socketAddr.asNodeListenerOptions(), () => {});
- * udpSocket.bind(socketAddr.asNodeBindOptions(), () => {});
- * tcpServer.listen({...socketAddr.asNodeListenerOptions(), ipv6Only: true}, () => {});
+ * const socketAddr = new SocketAddrV4({port: 6372}); // 0.0.0.0:6372
+ * tcpServer.listen(socketAddr.asNodeListener(), () => {});
+ * udpSocket.bind(socketAddr.asNodeBind(), () => {});
+ * tcpServer.listen({...socketAddr.asNodeListener(), ipv6Only: true}, () => {});
  * @since v0.0.1
  */
 export class SocketAddrV4 {
@@ -31,19 +31,24 @@ export class SocketAddrV4 {
 		if (octets.some((o) => o > 255)) {
 			return Err(new TypeError(`${value} is invalid ipv4 value`));
 		}
-		const addr = new Ipv4Addr(octets[0], octets[1], octets[2], octets[3]);
-		return Ok(new SocketAddrV4({addr, port}));
+		const address = new Ipv4Addr(octets[0], octets[1], octets[2], octets[3]);
+		return Ok(new SocketAddrV4({address, port}));
 	}
 
 	/**
 	 * Creates a new `SocketAddrV4` instance.
-	 * @param options - The options for creating the socket address.
+	 * @param options - The options for creating the socket address or a port number.
 	 * @param options.addr - The IPv4 address. Defaults to {@link Ipv4Addr.UNSPECIFIED}.
 	 * @param options.port - The port number.
 	 */
-	public constructor({addr, port}: {addr?: Ipv4Addr; port: number}) {
-		this.address = addr ?? Ipv4Addr.UNSPECIFIED;
-		this.port = port;
+	public constructor(options: {address?: Ipv4Addr; port: number} | number) {
+		if (typeof options === 'object') {
+			this.address = options.address ?? Ipv4Addr.UNSPECIFIED;
+			this.port = options.port;
+		} else {
+			this.address = Ipv4Addr.UNSPECIFIED;
+			this.port = options;
+		}
 	}
 
 	/**

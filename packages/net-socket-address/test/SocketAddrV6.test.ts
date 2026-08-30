@@ -3,7 +3,22 @@ import {describe, expect, it} from 'vitest';
 import {SocketAddrV6} from '../src/';
 
 describe('SocketAddrV6', function () {
-	it('creates with port only using unspecified IPv6 address', function () {
+	it('should create socket address with only port number', function () {
+		const socketAddress = new SocketAddrV6(6372);
+
+		expect(socketAddress.family).toBe('ipv6');
+		expect(socketAddress.address.equals(Ipv6Addr.UNSPECIFIED)).toBe(true);
+		expect(socketAddress.port).toBe(6372);
+		expect(socketAddress.flowlabel).toBe(undefined);
+		expect(socketAddress.toString()).toBe('[::]:6372');
+		expect(socketAddress).toEqual({
+			address: Ipv6Addr.UNSPECIFIED,
+			port: 6372,
+			family: 'ipv6',
+			flowlabel: undefined,
+		});
+	});
+	it('should create socket address with only port number using object syntax', function () {
 		const socketAddress = new SocketAddrV6({port: 6372});
 
 		expect(socketAddress.family).toBe('ipv6');
@@ -19,7 +34,7 @@ describe('SocketAddrV6', function () {
 		});
 	});
 
-	it('creates with explicit address, port, and flow label', function () {
+	it('should create socket address with explicit address, port, and flow label', function () {
 		const ipv6 = Ipv6Addr.from('2001:db8::1').unwrap();
 		const socketAddress = new SocketAddrV6({address: ipv6, port: 443, flowlabel: 99});
 
@@ -36,7 +51,7 @@ describe('SocketAddrV6', function () {
 		});
 	});
 
-	it('updates flow label via setter', function () {
+	it('should update flow label via setter', function () {
 		const socketAddress = new SocketAddrV6({port: 8080});
 
 		socketAddress.flowlabel = 77;
@@ -44,7 +59,7 @@ describe('SocketAddrV6', function () {
 		expect(socketAddress.flowlabel).toBe(77);
 	});
 
-	it('creates clone from toString', function () {
+	it('should create clone from toString', function () {
 		const socketAddress = new SocketAddrV6({address: Ipv6Addr.from('2001:db8::1').unwrap(), port: 443, flowlabel: 99});
 		const clonedAddress = SocketAddrV6.from(socketAddress.toString()).unwrap();
 		clonedAddress.flowlabel = 99; // Ensure flowlabel is set for comparison

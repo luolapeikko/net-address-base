@@ -3,7 +3,20 @@ import {describe, expect, it} from 'vitest';
 import {SocketAddrV4} from '../src/';
 
 describe('SocketAddrV4', function () {
-	it('creates with port only using unspecified IPv4 address', function () {
+	it('should create socket address with only port number', function () {
+		const socketAddress = new SocketAddrV4(6372);
+
+		expect(socketAddress.family).toBe('ipv4');
+		expect(socketAddress.address.equals(Ipv4Addr.UNSPECIFIED)).toBe(true);
+		expect(socketAddress.port).toBe(6372);
+		expect(socketAddress.toString()).toBe('0.0.0.0:6372');
+		expect(socketAddress).toEqual({
+			address: Ipv4Addr.UNSPECIFIED,
+			port: 6372,
+			family: 'ipv4',
+		});
+	});
+	it('should create socket address with only port number using object syntax', function () {
 		const socketAddress = new SocketAddrV4({port: 6372});
 
 		expect(socketAddress.family).toBe('ipv4');
@@ -17,9 +30,9 @@ describe('SocketAddrV4', function () {
 		});
 	});
 
-	it('creates with explicit address and port', function () {
+	it('should create socket address with explicit address and port', function () {
 		const ipv4 = Ipv4Addr.from('192.168.1.10').unwrap();
-		const socketAddress = new SocketAddrV4({addr: ipv4, port: 443});
+		const socketAddress = new SocketAddrV4({address: ipv4, port: 443});
 
 		expect(socketAddress.family).toBe('ipv4');
 		expect(socketAddress.address.equals(ipv4)).toBe(true);
@@ -32,8 +45,8 @@ describe('SocketAddrV4', function () {
 		});
 	});
 
-	it('creates clone from toString', function () {
-		const socketAddress = new SocketAddrV4({addr: Ipv4Addr.from('192.168.1.10').unwrap(), port: 443});
+	it('should create clone from toString', function () {
+		const socketAddress = new SocketAddrV4({address: Ipv4Addr.from('192.168.1.10').unwrap(), port: 443});
 		const clonedAddress = SocketAddrV4.from(socketAddress.toString()).unwrap();
 		expect(socketAddress.family).toBe('ipv4');
 		expect(socketAddress.port).toBe(443);

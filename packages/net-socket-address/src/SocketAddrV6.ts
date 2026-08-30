@@ -4,9 +4,9 @@ import {Ipv6Addr} from 'net-address';
 /**
  * Represents an IPv6 socket address, consisting of an IPv6 address, a port number, and an optional flow label.
  * @example
- * const anySocketAddress = new SocketAddrV6(6372); // new SocketAddrV6(Ipv6Addr.UNSPECIFIED, 6372);
- * tcpServer.listen(anySocketAddress.asNodeListenerOptions(), () => {});
- * udpSocket.bind(anySocketAddress, () => {});
+ * const anySocketAddress = new SocketAddrV6(6372); // [::]:6372
+ * tcpServer.listen(anySocketAddress.asNodeListener(), () => {});
+ * udpSocket.bind(anySocketAddress.asNodeBind(), () => {});
  * @since v0.0.1
  */
 export class SocketAddrV6 {
@@ -37,15 +37,20 @@ export class SocketAddrV6 {
 
 	/**
 	 * Creates a new `SocketAddrV6` instance.
-	 * @param options - The options for creating the socket address.
+	 * @param options - The options for creating the socket address or a port number.
 	 * @param options.address - The IPv6 address. Defaults to {@link Ipv6Addr.UNSPECIFIED}.
 	 * @param options.port - The port number.
 	 * @param options.flowlabel - The flow label.
 	 */
-	public constructor({address, port, flowlabel}: {address?: Ipv6Addr; port: number; flowlabel?: number}) {
-		this.address = address ?? Ipv6Addr.UNSPECIFIED;
-		this.port = port;
-		this.flowlabel = flowlabel;
+	public constructor(options: {address?: Ipv6Addr; port: number; flowlabel?: number} | number) {
+		if (typeof options === 'object') {
+			this.address = options.address ?? Ipv6Addr.UNSPECIFIED;
+			this.port = options.port;
+			this.flowlabel = options.flowlabel;
+		} else {
+			this.address = Ipv6Addr.UNSPECIFIED;
+			this.port = options;
+		}
 	}
 
 	/**

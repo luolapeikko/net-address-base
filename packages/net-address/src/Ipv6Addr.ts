@@ -136,6 +136,13 @@ export class Ipv6Addr {
 	#integerAddress: bigint;
 
 	/**
+	 * Gets the raw bigint representation of the IPv6 address.
+	 */
+	public get value(): bigint {
+		return this.#integerAddress;
+	}
+
+	/**
 	 * Creates a new IPv6 address instance.
 	 * @param value - A bigint representing the IPv6 address or an array of 8 numbers representing the segments of the address.
 	 * @throws {RangeError} If the segments array does not have exactly 8 elements or if any segment is out of range.
@@ -149,7 +156,7 @@ export class Ipv6Addr {
 		} else if (typeof valueOrSegments === 'bigint') {
 			this.#integerAddress = valueOrSegments;
 		} else {
-			throw new TypeError('Invalid constructor argument. Must be a bigint or an array of 8 numbers.');
+			throw new TypeError('Invalid Ipv6Addr arguments. Expected either 1 bigint or 8 numbers (segments).');
 		}
 	}
 
