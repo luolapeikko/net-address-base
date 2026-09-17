@@ -3,21 +3,40 @@
  * @example
  * const socketAddress = new SocketAddrUnix('/tmp/app.sock');
  * const windowsNamedPipeAddress = new SocketAddrUnix('\\\\.\\pipe\\app');
+ * @since v0.1.0
  */
 export class SocketAddrUnix {
+	/**
+	 * Address family of the socket address.
+	 * @since v0.1.0
+	 */
 	public readonly family = 'unix';
+	/**
+	 * File system path of the Unix socket.
+	 * @since v0.1.0
+	 */
 	public readonly path: string;
 
 	public constructor(path: string) {
 		this.path = path;
 	}
 
+	/**
+	 * Returns an object suitable for use as options in Node.js `net.Server.listen()` method.
+	 * @returns An object containing the `path` property.
+	 * @since v0.1.0
+	 */
 	public asNodeListener(): {path: string} {
 		return {
 			path: this.path,
 		};
 	}
 
+	/**
+	 * Returns a string representation of this Unix socket path.
+	 * @returns The string representation of the path.
+	 * @since v0.1.0
+	 */
 	public toString(): string {
 		return this.path;
 	}
@@ -29,6 +48,6 @@ export class SocketAddrUnix {
 	 * @since v0.1.0
 	 */
 	public equals(other: SocketAddrUnix | object): boolean {
-		return 'family' in other && this.family === other.family && this.path === other.path;
+		return other instanceof SocketAddrUnix && this.path === other.path;
 	}
 }

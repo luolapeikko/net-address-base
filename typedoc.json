@@ -18,6 +18,9 @@
     "typescript": {
       "AsyncIterable": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AsyncIterator",
       "ReadonlyArray": "https://www.typescriptlang.org/docs/handbook/2/objects.html#readonlyarraytype"
+    },
+    "core-result": {
+      "CoreResult": "https://github.com/luolapeikko/core-result/blob/main/index.d.ts"
     }
   },
   "name": "net-address",

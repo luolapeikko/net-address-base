@@ -35,16 +35,16 @@ describe('SocketAddrV6', function () {
 	});
 
 	it('should create socket address with explicit address, port, and flow label', function () {
-		const ipv6 = Ipv6Addr.from('2001:db8::1').unwrap();
-		const socketAddress = new SocketAddrV6({address: ipv6, port: 443, flowlabel: 99});
+		const ipv6Addr = Ipv6Addr.fromOrThrow('2001:db8::1');
+		const socketAddress = new SocketAddrV6({address: ipv6Addr, port: 443, flowlabel: 99});
 
 		expect(socketAddress.family).toBe('ipv6');
-		expect(socketAddress.address.equals(ipv6)).toBe(true);
+		expect(socketAddress.address.equals(ipv6Addr)).toBe(true);
 		expect(socketAddress.port).toBe(443);
 		expect(socketAddress.flowlabel).toBe(99);
 		expect(socketAddress.toString()).toBe('[2001:db8::1]:443');
 		expect(socketAddress).toEqual({
-			address: ipv6,
+			address: ipv6Addr,
 			port: 443,
 			family: 'ipv6',
 			flowlabel: 99,
@@ -60,12 +60,15 @@ describe('SocketAddrV6', function () {
 	});
 
 	it('should create clone from toString', function () {
-		const socketAddress = new SocketAddrV6({address: Ipv6Addr.from('2001:db8::1').unwrap(), port: 443, flowlabel: 99});
-		const clonedAddress = SocketAddrV6.from(socketAddress.toString()).unwrap();
-		clonedAddress.flowlabel = 99; // Ensure flowlabel is set for comparison
+		const socketAddress = new SocketAddrV6({address: Ipv6Addr.fromOrThrow('2001:db8::1'), port: 443, flowlabel: 99});
+		const clonedAddress = SocketAddrV6.from(socketAddress.toString());
+		if (!clonedAddress.success) {
+			throw new Error('Failed to parse cloned socket address');
+		}
+		clonedAddress.value.flowlabel = 99; // Ensure flowlabel is set for comparison
 		expect(socketAddress.family).toBe('ipv6');
 		expect(socketAddress.port).toBe(443);
 		expect(socketAddress.toString()).toBe('[2001:db8::1]:443');
-		expect(socketAddress).toEqual(clonedAddress);
+		expect(socketAddress).toEqual(clonedAddress.value);
 	});
 });

@@ -35,9 +35,9 @@
 	},
 	"homepage": "https://github.com/luolapeikko/net-address-base#readme",
 	"devDependencies": {
-		"@luolapeikko/result-option": "2.2.1"
+		"core-result": "0.0.3"
 	},
 	"peerDependencies": {
-		"@luolapeikko/result-option": ">= 2.0.0"
+		"core-result": ">= 0.0.3"
 	}
 }

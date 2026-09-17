@@ -1,10 +1,12 @@
-import {Err, type IResult, Ok} from '@luolapeikko/result-option';
+import type {CoreResult} from 'core-result';
+import {uw} from './common';
 import {Ipv6Addr} from './Ipv6Addr';
 
 /**
  * Represents an IPv4 address.
  * @example
- * const addr1 = Ipv4Addr.from('192.168.0.1').unwrap();
+ * const addr1Res = Ipv4Addr.from('192.168.0.1');
+ * const addr1 = Ipv4Addr.fromOrThrow('192.168.0.1');
  * const addr2 = new Ipv4Addr(192, 168, 0, 1);
  * const addr3 = new Ipv4Addr(0xc0a80001);
  * @since v0.0.1
@@ -12,56 +14,106 @@ import {Ipv6Addr} from './Ipv6Addr';
 export class Ipv4Addr {
 	/**
 	 * Creates an IPv4 address from dotted-decimal text.
-	 * @returns A successful {@link IResult} with an IPv4 address, or an error when the input is invalid.
+	 * @returns A successful {@link CoreResult} with an {@link Ipv4Addr}, or an {@link TypeError} when the input is invalid.
+	 * @example
+	 * const addr: CoreResult<Ipv4Addr, TypeError> = Ipv4Addr.from('192.168.0.1');
 	 * @since v0.0.1
 	 */
-	public static from(value: string): IResult<Ipv4Addr, TypeError> {
+	public static from(value: string): CoreResult<Ipv4Addr, TypeError> {
 		const match = value.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
 		if (!match) {
-			return Err(new TypeError(`${value} is invalid ipv4 value`));
+			return {
+				success: false,
+				error: new TypeError(`${value} is invalid ipv4 value`),
+			};
 		}
 		const octets = match.slice(1).map(Number);
 		if (octets.some((o) => o > 255)) {
-			return Err(new TypeError(`${value} is invalid ipv4 value`));
+			return {
+				success: false,
+				error: new TypeError(`${value} is invalid ipv4 value`),
+			};
 		}
-		return Ok(new Ipv4Addr(octets[0], octets[1], octets[2], octets[3]));
+		return {
+			success: true,
+			value: new Ipv4Addr(octets[0], octets[1], octets[2], octets[3]),
+		};
+	}
+
+	/**
+	 * Creates an IPv4 address from text and throws an error if the input is invalid.
+	 * @param value The IPv4 address in string format.
+	 * @returns The {@link Ipv4Addr} instance.
+	 * @throws {TypeError} If the input is not a valid IPv4 address.
+	 * @example
+	 * const addr: Ipv4Addr = Ipv4Addr.fromOrThrow('192.168.0.1');
+	 * @since v0.2.0
+	 */
+	public static fromOrThrow(value: string): Ipv4Addr {
+		return uw(Ipv4Addr.from(value));
 	}
 
 	/**
 	 * Creates an IPv4 address from a 4-byte buffer.
-	 * @returns A successful {@link IResult} with an IPv4 address, or an error when the buffer cannot be read.
+	 * @returns A successful {@link CoreResult} with an {@link Ipv4Addr}, or an {@link Error} when the buffer cannot be read.
+	 * @example
+	 * const result: CoreResult<Ipv4Addr, Error> = Ipv4Addr.fromBuffer(buffer);
 	 * @since v0.0.1
 	 */
-	public static fromBuffer(buffer: ArrayBuffer, littleEndian?: boolean): IResult<Ipv4Addr> {
+	public static fromBuffer(buffer: ArrayBuffer, littleEndian?: boolean): CoreResult<Ipv4Addr, Error> {
 		try {
 			const view = new DataView(buffer);
-			return Ok(new Ipv4Addr(view.getUint32(0, littleEndian)));
+			return {
+				success: true,
+				value: new Ipv4Addr(view.getUint32(0, littleEndian)),
+			};
 		} catch (err) {
-			return Err(err);
+			return {
+				success: false,
+				error: err as Error,
+			};
 		}
+	}
+
+	/**
+	 * Creates an IPv4 address from a 4-byte buffer and throws an error if the buffer cannot be read.
+	 * @param buffer The 4-byte buffer containing the IPv4 address.
+	 * @param littleEndian Whether the buffer is in little-endian format. Defaults to false (big-endian).
+	 * @returns The {@link Ipv4Addr} instance.
+	 * @throws {Error} If the buffer cannot be read.
+	 * @example
+	 * const addr: Ipv4Addr = Ipv4Addr.fromBufferOrThrow(buffer);
+	 * @since v0.2.0
+	 */
+	public static fromBufferOrThrow(buffer: ArrayBuffer, littleEndian?: boolean): Ipv4Addr {
+		return uw(Ipv4Addr.fromBuffer(buffer, littleEndian));
 	}
 
 	/**
 	 * The number of bits in an IPv4 address.
 	 * @since v0.0.1
+	 * @see https://doc.rust-lang.org/stable/std/net/struct.Ipv4Addr.html#associatedconstant.BITS
 	 */
 	public static readonly BITS = 32;
 
 	/**
 	 * The broadcast address `255.255.255.255`.
 	 * @since v0.0.1
+	 * @see https://doc.rust-lang.org/stable/std/net/struct.Ipv4Addr.html#associatedconstant.BROADCAST
 	 */
 	public static readonly BROADCAST: Ipv4Addr = new Ipv4Addr(0xffffffff);
 
 	/**
 	 * The localhost address `127.0.0.1`.
 	 * @since v0.0.1
+	 * @see https://doc.rust-lang.org/stable/std/net/struct.Ipv4Addr.html#associatedconstant.LOCALHOST
 	 */
 	public static readonly LOCALHOST: Ipv4Addr = new Ipv4Addr(0x7f000001);
 
 	/**
 	 * The unspecified address `0.0.0.0`.
 	 * @since v0.0.1
+	 * @see https://doc.rust-lang.org/stable/std/net/struct.Ipv4Addr.html#associatedconstant.UNSPECIFIED
 	 */
 	public static readonly UNSPECIFIED: Ipv4Addr = new Ipv4Addr(0x00000000);
 
@@ -229,6 +281,7 @@ export class Ipv4Addr {
 	 * @see https://datatracker.ietf.org/doc/html/rfc6598
 	 * @returns `true` when the address is in `100.64.0.0/10`, otherwise `false`.
 	 * @since v0.0.1
+	 * @see https://doc.rust-lang.org/stable/std/net/struct.Ipv4Addr.html#method.is_shared
 	 */
 	public isShared(): boolean {
 		return this.#match(0x64400000, 10);
@@ -238,27 +291,38 @@ export class Ipv4Addr {
 	 * Checks whether this address is the unspecified address.
 	 * @returns `true` when the address is `0.0.0.0`, otherwise `false`.
 	 * @since v0.0.1
+	 * @see https://doc.rust-lang.org/stable/std/net/struct.Ipv4Addr.html#method.is_unspecified
 	 */
 	public isUnspecified(): boolean {
 		return this.#integerAddress === 0;
 	}
 
 	/**
-	 * Converts this address to an IPv4-compatible IPv6 address.
-	 * @returns An IPv6 address in the form `::a.b.c.d`.
-	 * @since v0.0.1
+	 * Gets the four octets of this IPv4 address.
+	 * @returns An array containing the four octets `[num1, num2, num3, num4]`.
+	 * @see https://doc.rust-lang.org/stable/std/net/struct.Ipv4Addr.html#method.octets
+	 * @since v0.2.0
 	 */
-	public toIpv6(): Ipv6Addr {
-		return Ipv6Addr.from(`::${this.toString()}`).unwrap();
+	public toOctets(): [number, number, number, number] {
+		return this.#fromInteger(this.#integerAddress);
 	}
 
 	/**
-	 * Converts this address to an IPv4-mapped IPv6 address.
-	 * @returns An IPv6 address in the form `::ffff:a.b.c.d`.
+	 * Converts this address to an IPv4-compatible {@link Ipv6Addr}.
+	 * @returns An {@link Ipv6Addr} in the form `::a.b.c.d`.
+	 * @since v0.0.1
+	 */
+	public toIpv6(): Ipv6Addr {
+		return new Ipv6Addr(BigInt(this.value));
+	}
+
+	/**
+	 * Converts this address to an IPv4-mapped {@link Ipv6Addr}.
+	 * @returns An {@link Ipv6Addr} in the form `::ffff:a.b.c.d`.
 	 * @since v0.0.1
 	 */
 	public toIpv6Mapped(): Ipv6Addr {
-		return Ipv6Addr.from(`::ffff:${this.toString()}`).unwrap();
+		return new Ipv6Addr(0xffff00000000n | BigInt(this.value));
 	}
 
 	/**
@@ -267,30 +331,30 @@ export class Ipv4Addr {
 	 * @since v0.0.1
 	 */
 	public toString(): string {
-		const [num1, num2, num3, num4] = this.#fromInteger(this.#integerAddress);
-		return `${num1}.${num2}.${num3}.${num4}`;
+		return this.toOctets().join('.');
 	}
 
 	/**
 	 * Encodes this address to a 4-byte buffer.
-	 * @returns An `ArrayBuffer` containing the IPv4 integer value.
+	 * @returns An {@link ArrayBuffer} containing the IPv4 integer value.
 	 * @since v0.0.1
+	 * @example
+	 * const buffer: ArrayBuffer = addr.toBuffer();
 	 */
 	public toBuffer(littleEndian?: boolean): ArrayBuffer {
-		const buffer = new ArrayBuffer(4);
-		const view = new DataView(buffer);
+		const view = new DataView(new ArrayBuffer(4));
 		view.setUint32(0, this.#integerAddress, littleEndian);
-		return buffer;
+		return view.buffer;
 	}
 
 	/**
 	 * Compares this IPv4 address with another for equality.
-	 * @param other instance of another IPv4 address to compare with.
+	 * @param other instance of another address like to compare with.
 	 * @returns `true` if both addresses are equal, otherwise `false`.
 	 * @since v0.1.0
 	 */
-	public equals(other: Ipv4Addr | Ipv6Addr | object): boolean {
-		return 'family' in other && this.family === other.family && this.#integerAddress === other.#integerAddress;
+	public equals(other?: unknown): boolean {
+		return other instanceof Ipv4Addr && this.#integerAddress === other.#integerAddress;
 	}
 
 	#toInteger(num1: number, num2: number, num3: number, num4: number): number {

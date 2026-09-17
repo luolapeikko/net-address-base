@@ -36,11 +36,11 @@
 	},
 	"homepage": "https://github.com/luolapeikko/net-address-base#readme",
 	"devDependencies": {
-		"@luolapeikko/result-option": "2.2.1",
+		"core-result": "0.0.3",
 		"net-address": "workspace:*"
 	},
 	"peerDependencies": {
-		"@luolapeikko/result-option": ">= 2.0.0",
+		"core-result": ">= 0.0.3",
 		"net-address": ">= 0.0.1"
 	}
 }

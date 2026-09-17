@@ -31,26 +31,25 @@ describe('SocketAddrV4', function () {
 	});
 
 	it('should create socket address with explicit address and port', function () {
-		const ipv4 = Ipv4Addr.from('192.168.1.10').unwrap();
-		const socketAddress = new SocketAddrV4({address: ipv4, port: 443});
-
+		const address = Ipv4Addr.fromOrThrow('192.168.1.10');
+		const socketAddress = new SocketAddrV4({address, port: 443});
 		expect(socketAddress.family).toBe('ipv4');
-		expect(socketAddress.address.equals(ipv4)).toBe(true);
+		expect(socketAddress.address.equals(address)).toBe(true);
 		expect(socketAddress.port).toBe(443);
 		expect(socketAddress.toString()).toBe('192.168.1.10:443');
 		expect(socketAddress).toEqual({
-			address: ipv4,
+			address,
 			port: 443,
 			family: 'ipv4',
 		});
 	});
 
 	it('should create clone from toString', function () {
-		const socketAddress = new SocketAddrV4({address: Ipv4Addr.from('192.168.1.10').unwrap(), port: 443});
-		const clonedAddress = SocketAddrV4.from(socketAddress.toString()).unwrap();
+		const socketAddress = new SocketAddrV4({address: Ipv4Addr.fromOrThrow('192.168.1.10'), port: 443});
+		const cloned = SocketAddrV4.fromOrThrow(socketAddress.toString());
 		expect(socketAddress.family).toBe('ipv4');
 		expect(socketAddress.port).toBe(443);
 		expect(socketAddress.toString()).toBe('192.168.1.10:443');
-		expect(socketAddress).toEqual(clonedAddress);
+		expect(socketAddress).toEqual(cloned);
 	});
 });
